@@ -1,0 +1,18 @@
+# Ambiente virtual
+venv/
+.venv/
+
+# Variáveis de ambiente (NUNCA subir isso!)
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Banco de dados
+*.fdb
+*.gdb
+
+# Logs
+*.log
