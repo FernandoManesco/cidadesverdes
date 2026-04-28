@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <img id="img" style="max-width:100%">
+  <script>
+    fetch("http://localhost:8000/grafico/2d")
+      .then(r => r.json())
+      .then(d => document.getElementById("img").src = "data:image/png;base64," + d.imagem_base64)
+  </script>
+</body>
+</html>
