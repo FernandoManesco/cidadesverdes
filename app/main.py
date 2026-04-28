@@ -4,7 +4,7 @@ from app.database import lifespan
 app = FastAPI(
     title="Cidades Verdes API",
     description="Sistema de gestão - Cidades Verdes",
-    version="1.0.0",
+    version="1.5.0",
     lifespan=lifespan
 )
 
