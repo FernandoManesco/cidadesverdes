@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cidade Verde - Versão Simplificada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .metric-card {
+            transition: transform 0.2s ease-in-out;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            background-color: #10b981;
+            color: white;
+        }
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-leaf text-3xl"></i>
+                    <div>
+                        <h1 class="text-2xl font-bold">Cidade Verde</h1>
+                        <p class="text-emerald-100 text-sm">Monitoramento Ambiental de Rio Claro</p>
+                    </div>
+                </div>
+                <nav class="flex space-x-2">
+                    <button onclick="showPage('visao-geral')" class="nav-link active px-4 py-2 rounded-lg font-medium transition-all" id="nav-visao-geral">
+                        <i class="fas fa-chart-line mr-2"></i>Visão Geral
+                    </button>
+                    <button onclick="showPage('cidades')" class="nav-link px-4 py-2 rounded-lg font-medium transition-all bg-white/10 hover:bg-white/20" id="nav-cidades">
+                        <i class="fas fa-city mr-2"></i>Cidades
+                    </button>
+                    <button onclick="showPage('bairros')" class="nav-link px-4 py-2 rounded-lg font-medium transition-all bg-white/10 hover:bg-white/20" id="nav-bairros">
+                        <i class="fas fa-map-marked-alt mr-2"></i>Bairros
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Visão Geral Section -->
+        <section id="visao-geral" class="page-section active">
+            <!-- Welcome Banner -->
+            <div class="relative overflow-hidden rounded-2xl gradient-bg card-shadow mb-8">
+                <div class="absolute inset-0 opacity-20">
+                    <img src="https://images.unsplash.com/photo-1759468497667-5ef03f5c87cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmVlbiUyMHNtYXJ0JTIwY2l0eSUyMG5hdHVyZSUyMGVjb3xlbnwxfHx8fDE3NzU1Njg2Nzh8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="Cidade Verde" class="w-full h-full object-cover">
+                </div>
+                <div class="relative z-10 p-8">
+                    <h2 class="text-3xl font-bold text-white mb-3">Bem-vindo ao Cidade Verde</h2>
+                    <p class="text-emerald-100 text-lg">Monitoramento em tempo real da qualidade de vida e dos indicadores ambientais de Rio Claro.</p>
+                </div>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="metric-card bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-green-100 p-3 rounded-lg">
+                            <i class="fas fa-wind text-green-600 text-xl"></i>
+                        </div>
+                        <span class="text-green-600 text-sm font-semibold bg-green-50 px-2 py-1 rounded">↓ 12%</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium mb-1">Qualidade do Ar (AQI)</h3>
+                    <p class="text-2xl font-bold text-gray-800">45 <span class="text-sm font-normal text-gray-600">AQI</span></p>
+                    <p class="text-xs text-gray-500 mt-1">vs. ontem</p>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-yellow-100 p-3 rounded-lg">
+                            <i class="fas fa-temperature-high text-yellow-600 text-xl"></i>
+                        </div>
+                        <span class="text-yellow-600 text-sm font-semibold bg-yellow-50 px-2 py-1 rounded">↑ 2°C</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium mb-1">Temperatura Atual</h3>
+                    <p class="text-2xl font-bold text-gray-800">28 <span class="text-sm font-normal text-gray-600">°C</span></p>
+                    <p class="text-xs text-gray-500 mt-1">vs. média da semana</p>
+                </div>
+
+                <div class="metric-card bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-100 p-3 rounded-lg">
+                            <i class="fas fa-tint text-blue-600 text-xl"></i>
+                        </div>
+                        <span class="text-blue-600 text-sm font-semibold bg-blue-50 px-2 py-1 rounded">↓ 5%</span>
+                    </div>
+                    <h3 class="text-gray-600 text-sm font-medium mb-1">Umidade Relativa</h3>
+                    <p class="text-2xl font-bold text-gray-800">55 <span class="text-sm font-normal text-gray-600">%</span></p>
+                    <p class="text-xs text-gray-500 mt-1">vs. ontem</p>
+                </div>
+            </div>
+
+            <!-- Overview Chart -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Visão Geral do Dia</h3>
+                        <p class="text-sm text-gray-500">Média da cidade nas últimas 24 horas</p>
+                    </div>
+                    <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg px-3 py-2">
+                        <option>Hoje</option>
+                        <option>Últimos 7 dias</option>
+                        <option>Últimos 30 dias</option>
+                    </select>
+                </div>
+                <div class="h-80">
+                    <canvas id="overviewChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cidades Section -->
+        <section id="cidades" class="page-section">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-city text-emerald-500"></i>
+                    Cidades
+                </h2>
+                <p class="text-gray-500 mt-1">Comparativo de qualidade do ar com a região</p>
+            </div>
+
+            <!-- Cities Classification Chart -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Classificação das Cidades por Qualidade do Ar</h3>
+                        <p class="text-sm text-gray-500">Distribuição das cidades da região por categoria de qualidade do ar</p>
+                    </div>
+                    <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg px-3 py-2">
+                        <option>Hoje</option>
+                        <option>Últimos 7 dias</option>
+                        <option>Últimos 30 dias</option>
+                    </select>
+                </div>
+                <div class="h-80">
+                    <canvas id="citiesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Cities Groups -->
+            <div id="citiesGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <!-- Os grupos serão preenchidos dinamicamente com JavaScript -->
+            </div>
+        </section>
+
+        <!-- Bairros Section -->
+        <section id="bairros" class="page-section">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    <i class="fas fa-map-marked-alt text-emerald-500"></i>
+                    Bairros de Rio Claro
+                </h2>
+                <p class="text-gray-500 mt-1">Classificação da qualidade do ar nos bairros da cidade</p>
+            </div>
+
+            <!-- Bairros Classification Chart -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Classificação dos Bairros por Qualidade do Ar</h3>
+                        <p class="text-sm text-gray-500">Distribuição dos bairros por categoria de qualidade do ar</p>
+                    </div>
+                    <select class="bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-lg px-3 py-2">
+                        <option>Hoje</option>
+                        <option>Últimos 7 dias</option>
+                        <option>Últimos 30 dias</option>
+                    </select>
+                </div>
+                <div class="h-80">
+                    <canvas id="bairrosChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bairros Groups -->
+            <div id="bairrosGroups" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+                <!-- Os grupos serão preenchidos dinamicamente com JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Função para renderizar os grupos de cidades
+        function renderizarGruposCidades(grupos) {
+            const container = document.getElementById('citiesGroups');
+            container.innerHTML = '';
+            
+            const ordemGrupos = ['Excelente', 'Bom', 'Moderado', 'Ruim', 'Perigoso'];
+            const configuracoes = {
+                'Excelente': {
+                    icone: 'fas fa-award',
+                    corIcone: 'text-green-600',
+                    corTitulo: 'text-green-800',
+                    corFundo: 'bg-green-100',
+                    corTexto: 'text-green-800',
+                    corCard: 'bg-green-50',
+                    corBorda: 'border-green-200',
+                    corValor: 'text-green-700'
+                },
+                'Bom': {
+                    icone: 'fas fa-smile',
+                    corIcone: 'text-lime-600',
+                    corTitulo: 'text-lime-800',
+                    corFundo: 'bg-lime-100',
+                    corTexto: 'text-lime-800',
+                    corCard: 'bg-lime-50',
+                    corBorda: 'border-lime-200',
+                    corValor: 'text-lime-700'
+                },
+                'Moderado': {
+                    icone: 'fas fa-exclamation-triangle',
+                    corIcone: 'text-yellow-600',
+                    corTitulo: 'text-yellow-800',
+                    corFundo: 'bg-yellow-100',
+                    corTexto: 'text-yellow-800',
+                    corCard: 'bg-yellow-50',
+                    corBorda: 'border-yellow-200',
+                    corValor: 'text-yellow-700'
+                },
+                'Ruim': {
+                    icone: 'fas fa-frown',
+                    corIcone: 'text-orange-600',
+                    corTitulo: 'text-orange-800',
+                    corFundo: 'bg-orange-100',
+                    corTexto: 'text-orange-800',
+                    corCard: 'bg-orange-50',
+                    corBorda: 'border-orange-200',
+                    corValor: 'text-orange-700'
+                },
+                'Perigoso': {
+                    icone: 'fas fa-exclamation-triangle',
+                    corIcone: 'text-red-600',
+                    corTitulo: 'text-red-800',
+                    corFundo: 'bg-red-100',
+                    corTexto: 'text-red-800',
+                    corCard: 'bg-red-50',
+                    corBorda: 'border-red-200',
+                    corValor: 'text-red-700'
+                }
+            };
+            
+            ordemGrupos.forEach(grupoNome => {
+                const cidadesGrupo = grupos[grupoNome];
+                const config = configuracoes[grupoNome];
+                const aqiRange = '';
+                
+                if (cidadesGrupo.length === 0) {
+                    // Grupo vazio - mostrar mensagem
+                    const grupoVazioHTML = `
+                        <div class="bg-white rounded-xl p-6 card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold ${config.corTitulo} flex items-center gap-2">
+                                    <i class="${config.icone} ${config.corIcone}"></i>
+                                    ${grupoNome}
+                                </h4>
+                                <span class="${config.corFundo} ${config.corTexto} text-sm font-semibold px-3 py-1 rounded-full">0 cidades</span>
+                            </div>
+                            <div class="text-center py-8">
+                                <i class="${config.icone} ${config.corIcone} text-4xl mb-3 opacity-30"></i>
+                                <p class="text-gray-500 text-sm">Nenhuma cidade nesse grupo</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += grupoVazioHTML;
+                } else {
+                    // Grupo com cidades
+                    const grupoHTML = `
+                        <div class="bg-white rounded-xl p-6 card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold ${config.corTitulo} flex items-center gap-2">
+                                    <i class="${config.icone} ${config.corIcone}"></i>
+                                    ${grupoNome}
+                                </h4>
+                                <span class="${config.corFundo} ${config.corTexto} text-sm font-semibold px-3 py-1 rounded-full">${cidadesGrupo.length} cidades</span>
+                            </div>
+                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                                ${cidadesGrupo.map(cidade => `
+                                    <div class="flex items-center justify-between p-3 ${config.corCard} rounded-lg border ${config.corBorda}">
+                                        <span class="font-medium text-gray-800">${cidade.nome}</span>
+                                        <span class="text-sm font-semibold ${config.corValor}">AQI: ${cidade.classificacao.aqi}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += grupoHTML;
+                }
+            });
+        }
+        
+        // Função para renderizar os grupos de bairros
+        function renderizarGruposBairros(grupos) {
+            const container = document.getElementById('bairrosGroups');
+            container.innerHTML = '';
+            
+            const ordemGrupos = ['Ótimo', 'Bom', 'Moderado', 'Ruim'];
+            const configuracoes = {
+                'Ótimo': {
+                    icone: 'fas fa-award',
+                    corIcone: 'text-green-600',
+                    corTitulo: 'text-green-800',
+                    corFundo: 'bg-green-100',
+                    corTexto: 'text-green-800',
+                    corCard: 'bg-green-50',
+                    corBorda: 'border-green-200',
+                    corValor: 'text-green-700'
+                },
+                'Bom': {
+                    icone: 'fas fa-smile',
+                    corIcone: 'text-lime-600',
+                    corTitulo: 'text-lime-800',
+                    corFundo: 'bg-lime-100',
+                    corTexto: 'text-lime-800',
+                    corCard: 'bg-lime-50',
+                    corBorda: 'border-lime-200',
+                    corValor: 'text-lime-700'
+                },
+                'Moderado': {
+                    icone: 'fas fa-exclamation-triangle',
+                    corIcone: 'text-yellow-600',
+                    corTitulo: 'text-yellow-800',
+                    corFundo: 'bg-yellow-100',
+                    corTexto: 'text-yellow-800',
+                    corCard: 'bg-yellow-50',
+                    corBorda: 'border-yellow-200',
+                    corValor: 'text-yellow-700'
+                },
+                'Ruim': {
+                    icone: 'fas fa-frown',
+                    corIcone: 'text-orange-600',
+                    corTitulo: 'text-orange-800',
+                    corFundo: 'bg-orange-100',
+                    corTexto: 'text-orange-800',
+                    corCard: 'bg-orange-50',
+                    corBorda: 'border-orange-200',
+                    corValor: 'text-orange-700'
+                }
+            };
+            
+            ordemGrupos.forEach(grupoNome => {
+                const bairrosGrupo = grupos[grupoNome];
+                const config = configuracoes[grupoNome];
+                
+                if (bairrosGrupo.length === 0) {
+                    // Grupo vazio - mostrar mensagem
+                    const grupoVazioHTML = `
+                        <div class="bg-white rounded-xl p-6 card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold ${config.corTitulo} flex items-center gap-2">
+                                    <i class="${config.icone} ${config.corIcone}"></i>
+                                    ${grupoNome}
+                                </h4>
+                                <span class="${config.corFundo} ${config.corTexto} text-sm font-semibold px-3 py-1 rounded-full">0 bairros</span>
+                            </div>
+                            <div class="text-center py-8">
+                                <i class="${config.icone} ${config.corIcone} text-4xl mb-3 opacity-30"></i>
+                                <p class="text-gray-500 text-sm">Nenhum bairro nesse grupo</p>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += grupoVazioHTML;
+                } else {
+                    // Grupo com bairros
+                    const grupoHTML = `
+                        <div class="bg-white rounded-xl p-6 card-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-bold ${config.corTitulo} flex items-center gap-2">
+                                    <i class="${config.icone} ${config.corIcone}"></i>
+                                    ${grupoNome}
+                                </h4>
+                                <span class="${config.corFundo} ${config.corTexto} text-sm font-semibold px-3 py-1 rounded-full">${bairrosGrupo.length} bairros</span>
+                            </div>
+                            <div class="space-y-3 max-h-96 overflow-y-auto">
+                                ${bairrosGrupo.map(bairro => `
+                                    <div class="flex items-center justify-between p-3 ${config.corCard} rounded-lg border ${config.corBorda}">
+                                        <span class="font-medium text-gray-800">${bairro.nome}</span>
+                                        <span class="text-sm font-semibold ${config.corValor}">AQI: ${bairro.aqi}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += grupoHTML;
+                }
+            });
+        }
+        
+        // Inicializar variável global
+        let grupos = {
+            'Perigoso': [],
+            'Atenção': [],
+            'Médio': [],
+            'Ótimo': []
+        };
+        
+        // Renderizar os grupos com os dados
+        renderizarGruposCidades(grupos);
+    </script>
+</section>
+</main>
+
+<script>
+        // Navigation
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                link.classList.add('bg-white/10', 'hover:bg-white/20');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to selected nav link
+            const activeNav = document.getElementById('nav-' + pageId);
+            activeNav.classList.add('active');
+            activeNav.classList.remove('bg-white/10', 'hover:bg-white/20');
+        }
+
+        // Overview Chart
+        const overviewCtx = document.getElementById('overviewChart').getContext('2d');
+        const overviewChart = new Chart(overviewCtx, {
+            type: 'line',
+            data: {
+                labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                datasets: [{
+                    label: 'AQI (Qualidade do Ar)',
+                    data: [45, 42, 38, 48, 62, 68, 55],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Temperatura (°C)',
+                    data: [22, 24, 19, 26, 31, 29, 25],
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }, {
+                    label: 'Umidade (%)',
+                    data: [65, 62, 70, 58, 52, 55, 60],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    yAxisID: 'y'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dias da Semana'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Valores'
+                        },
+                        ticks: {
+                            display: true
+                        },
+                        grid: {
+                            display: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to update y-axis visibility based on active datasets
+        function updateYAxisVisibility() {
+            const activeDatasets = overviewChart.data.datasets.filter(dataset => dataset.hidden !== true);
+            const yAxis = overviewChart.options.scales.y;
+            
+            if (activeDatasets.length === 0) {
+                // Hide y-axis values and grid when no datasets are visible
+                yAxis.ticks.display = false;
+                yAxis.grid.display = false;
+                yAxis.title.display = false;
+            } else {
+                // Show y-axis values and grid when at least one dataset is visible
+                yAxis.ticks.display = true;
+                yAxis.grid.display = true;
+                yAxis.title.display = true;
+                // Ensure no decimal numbers
+                yAxis.ticks.callback = function(value) {
+                    return Math.round(value);
+                };
+            }
+            
+            overviewChart.update();
+        }
+
+        // Add event listener for legend clicks
+        overviewChart.options.plugins.legend.onClick = function(e, legendItem, legend) {
+            const index = legendItem.datasetIndex;
+            const ci = legend.chart;
+            const meta = ci.getDatasetMeta(index);
+            
+            // Toggle dataset visibility
+            meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+            
+            // Update y-axis visibility
+            updateYAxisVisibility();
+        };
+
+        // Obter dados reais da API backend
+        async function obterDadosAPI() {
+            try {
+                // Tentar obter dados das cidades próximas primeiro
+                const response = await fetch('http://localhost:8001/dados/cidades-proximas');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Mapear dados da API para o formato esperado
+                return data.dados.map(item => ({
+                    nome: item.nome,
+                    temperatura: item.temperatura,
+                    umidade: item.umidade,
+                    co2: item.co2,
+                    aqi: item.aqi || Math.round(item.co2 / 10), // Usar AQI da API ou calcular
+                    source: item.source || "API",
+                    location: item.location || "Rio Claro",
+                    timestamp: item.timestamp || new Date().toISOString()
+                }));
+            } catch (error) {
+                console.error('Erro ao buscar dados das cidades próximas:', error);
+                // Fallback para dados históricos se API de cidades falhar
+                try {
+                    const response = await fetch('http://localhost:8001/dados/historico?ultimas_n=20');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    // Mapear dados da API para o formato esperado
+                    return data.dados.map((item, index) => ({
+                        nome: `Leitura ${index + 1}`,
+                        temperatura: item.temperatura,
+                        umidade: item.umidade,
+                        co2: item.co2,
+                        aqi: item.aqi || Math.round(item.co2 / 10),
+                        source: item.source || "API",
+                        location: item.location || "Rio Claro",
+                        timestamp: item.timestamp
+                    }));
+                } catch (fallbackError) {
+                    console.error('Erro ao buscar dados históricos:', fallbackError);
+                    // Fallback final para dados simulados
+                    return gerarDadosSimulados();
+                }
+            }
+        }
+
+        // Função fallback com dados simulados
+        function gerarDadosSimulados() {
+            const cidades = [
+                'Rio Claro', 'Limeira', 'Piracicaba', 'Americana', 'Santa Gertrudes',
+                'Araras', 'Cordeirópolis', 'Campinas', 'São Paulo', 'Guarulhos',
+                'Osasco', 'São Bernardo', 'Santo André', 'Diadema', 'Mauá',
+                'Jundiaí', 'Sorocaba', 'Ribeirão Preto', 'Franca', 'Bauru'
+            ];
+            
+            const dados = [];
+            
+            for (let i = 0; i < cidades.length; i++) {
+                // Simular padrões diários (baseado na hora atual)
+                const hora = new Date().getHours();
+                let temp_base, humidity_base, co2_base;
+                
+                if (6 <= hora <= 18) {  // Dia
+                    temp_base = 22 + (Math.random() * 8 - 3);  // 19-30°C
+                    humidity_base = 45 + (Math.random() * 25 - 10);  // 35-70%
+                    co2_base = 450 + (Math.random() * 300 - 100);  // 350-750ppm
+                } else {  // Noite
+                    temp_base = 18 + (Math.random() * 6 - 3);  // 15-24°C
+                    humidity_base = 60 + (Math.random() * 30 - 10);  // 50-90%
+                    co2_base = 600 + (Math.random() * 400 - 100);  // 500-900ppm
+                }
+                
+                // Adicionar anomalias ocasionais (10% de chance)
+                if (Math.random() < 0.1) {
+                    const anomalia = ['quente', 'frio', 'co2_alto'][Math.floor(Math.random() * 3)];
+                    
+                    if (anomalia === 'quente') {
+                        temp_base = 30 + Math.random() * 5;  // 30-35°C
+                        co2_base = 800 + Math.random() * 700;  // 800-1500ppm
+                    } else if (anomalia === 'frio') {
+                        temp_base = 8 + Math.random() * 4;  // 8-12°C
+                        humidity_base = 75 + Math.random() * 10;  // 75-85%
+                    } else if (anomalia === 'co2_alto') {
+                        co2_base = 2500 + Math.random() * 1500;  // 2500-4000ppm
+                    }
+                }
+                
+                // Adicionar variação realista (simulando API OpenWeather)
+                let temp = temp_base + (Math.random() * 4 - 2);  // ±2°C
+                let humidity = humidity_base + (Math.random() * 10 - 5);  // ±5%
+                let co2 = co2_base + (Math.random() * 100 - 50);  // ±50ppm
+                
+                // Limites realistas
+                temp = Math.max(5, Math.min(40, temp));
+                humidity = Math.max(20, Math.min(95, humidity));
+                co2 = Math.max(300, Math.min(5000, co2));
+                
+                dados.push({
+                    nome: cidades[i],
+                    temperatura: Math.round(temp * 10) / 10,
+                    umidade: Math.round(humidity * 10) / 10,
+                    co2: Math.round(co2),
+                    source: "Simulated Fallback",
+                    location: "São Paulo"
+                });
+            }
+            
+            // Calcular AQI baseado no CO2 (principal poluente)
+            return dados.map(cidade => ({
+                ...cidade,
+                aqi: Math.round(cidade.co2 / 10) // Simplificação: AQI ≈ CO2/10
+            }));
+        }
+
+        // Classificação baseada nos 5 níveis de AQI da OpenWeatherMap
+        function classificarCidade(cidade) {
+            const { aqi } = cidade;
+            
+            // Usar classificação AQI da API (1-5)
+            if (aqi === 1) {
+                return { 
+                    grupo: 'Excelente', 
+                    nivel: 'AQI 1 - Excelente', 
+                    descricao: 'Qualidade do ar excelente',
+                    cor: 'green',
+                    aqi: aqi 
+                };
+            } else if (aqi === 2) {
+                return { 
+                    grupo: 'Bom', 
+                    nivel: 'AQI 2 - Bom', 
+                    descricao: 'Qualidade do ar boa',
+                    cor: 'lightgreen',
+                    aqi: aqi 
+                };
+            } else if (aqi === 3) {
+                return { 
+                    grupo: 'Moderado', 
+                    nivel: 'AQI 3 - Moderado', 
+                    descricao: 'Qualidade do ar moderada',
+                    cor: 'yellow',
+                    aqi: aqi 
+                };
+            } else if (aqi === 4) {
+                return { 
+                    grupo: 'Ruim', 
+                    nivel: 'AQI 4 - Ruim', 
+                    descricao: 'Qualidade do ar ruim',
+                    cor: 'orange',
+                    aqi: aqi 
+                };
+            } else if (aqi === 5) {
+                return { 
+                    grupo: 'Perigoso', 
+                    nivel: 'AQI 5 - Perigoso', 
+                    descricao: 'Qualidade do ar perigosa',
+                    cor: 'red',
+                    aqi: aqi 
+                };
+            } else {
+                return { 
+                    grupo: 'Excelente', 
+                    nivel: 'AQI 1 - Excelente', 
+                    descricao: 'Qualidade do ar excelente',
+                    cor: 'green',
+                    aqi: 1 
+                };
+            }
+        }
+
+        // Função principal para carregar e classificar dados
+        async function carregarDadosClassificar() {
+            try {
+                // Obter dados da API
+                const dados = await obterDadosAPI();
+                
+                // Usar classificação AQI da API (já vem classificada)
+                const dadosClassificados = dados.map(cidade => ({
+                    ...cidade,
+                    classificacao: cidade.classificacao_aqi || classificarCidade(cidade)
+                }));
+                
+                // Agrupar por categoria AQI
+                grupos = {
+                    'Excelente': dadosClassificados.filter(d => d.classificacao.grupo === 'Excelente'),
+                    'Bom': dadosClassificados.filter(d => d.classificacao.grupo === 'Bom'),
+                    'Moderado': dadosClassificados.filter(d => d.classificacao.grupo === 'Moderado'),
+                    'Ruim': dadosClassificados.filter(d => d.classificacao.grupo === 'Ruim'),
+                    'Perigoso': dadosClassificados.filter(d => d.classificacao.grupo === 'Perigoso')
+                };
+                
+                // Renderizar interface
+                renderizarGruposCidades(grupos);
+                atualizarGraficoCidades();
+                atualizarMetricas(dadosClassificados);
+                
+                console.log('Dados carregados e classificados:', grupos);
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                // Usar dados simulados em caso de erro
+                const dadosSimulados = gerarDadosSimulados();
+                const dadosClassificados = dadosSimulados.map(cidade => ({
+                    ...cidade,
+                    classificacao: classificarCidade(cidade)
+                }));
+                
+                grupos = {
+                    'Perigoso': dadosClassificados.filter(d => d.classificacao.grupo === 'Perigoso'),
+                    'Atenção': dadosClassificados.filter(d => d.classificacao.grupo === 'Atenção'),
+                    'Médio': dadosClassificados.filter(d => d.classificacao.grupo === 'Médio'),
+                    'Ótimo': dadosClassificados.filter(d => d.classificacao.grupo === 'Ótimo')
+                };
+                
+                renderizarGruposCidades(grupos);
+                atualizarGraficoCidades();
+                atualizarMetricas(dadosClassificados);
+            }
+        }
+        
+        // Atualizar gráfico de cidades
+        function atualizarGraficoCidades() {
+            // Calcular médias para o gráfico (apenas grupos com cidades)
+            const dadosGrafico = [
+                { grupo: 'Excelente', cidades: grupos['Excelente'], mediaTemp: grupos['Excelente'].length > 0 ? Math.round(grupos['Excelente'].reduce((sum, c) => sum + c.temperatura, 0) / grupos['Excelente'].length * 10) / 10 : 25 },
+                { grupo: 'Bom', cidades: grupos['Bom'], mediaTemp: grupos['Bom'].length > 0 ? Math.round(grupos['Bom'].reduce((sum, c) => sum + c.temperatura, 0) / grupos['Bom'].length * 10) / 10 : 27 },
+                { grupo: 'Moderado', cidades: grupos['Moderado'], mediaTemp: grupos['Moderado'].length > 0 ? Math.round(grupos['Moderado'].reduce((sum, c) => sum + c.temperatura, 0) / grupos['Moderado'].length * 10) / 10 : 29 },
+                { grupo: 'Ruim', cidades: grupos['Ruim'], mediaTemp: grupos['Ruim'].length > 0 ? Math.round(grupos['Ruim'].reduce((sum, c) => sum + c.temperatura, 0) / grupos['Ruim'].length * 10) / 10 : 31 },
+                { grupo: 'Perigoso', cidades: grupos['Perigoso'], mediaTemp: grupos['Perigoso'].length > 0 ? Math.round(grupos['Perigoso'].reduce((sum, c) => sum + c.temperatura, 0) / grupos['Perigoso'].length * 10) / 10 : 33 }
+            ].filter(dado => dado.cidades.length > 0); // Filtrar apenas grupos com cidades
+            
+            // Atualizar gráfico existente ou criar novo
+            const citiesCtx = document.getElementById('citiesChart');
+            if (citiesCtx) {
+                if (window.citiesChartInstance) {
+                    window.citiesChartInstance.destroy();
+                }
+                
+                window.citiesChartInstance = new Chart(citiesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: dadosGrafico.map(d => `${d.grupo} (${d.cidades.length} cidades)`),
+                        datasets: [{
+                            label: 'Temperatura Média por Grupo (°C)',
+                            data: dadosGrafico.map(d => d.mediaTemp),
+                            backgroundColor: dadosGrafico.map(d => {
+                                if (d.grupo === 'Excelente') return 'rgba(34, 197, 94, 0.8)';
+                                if (d.grupo === 'Bom') return 'rgba(132, 204, 22, 0.8)';
+                                if (d.grupo === 'Moderado') return 'rgba(250, 204, 21, 0.8)';
+                                if (d.grupo === 'Ruim') return 'rgba(251, 146, 60, 0.8)';
+                                if (d.grupo === 'Perigoso') return 'rgba(239, 68, 68, 0.8)';
+                                return 'rgba(156, 163, 175, 0.8)';
+                            }),
+                            borderColor: dadosGrafico.map(d => {
+                                if (d.grupo === 'Excelente') return '#22c55e';
+                                if (d.grupo === 'Bom') return '#84cc16';
+                                if (d.grupo === 'Moderado') return '#facc15';
+                                if (d.grupo === 'Ruim') return '#fb923c';
+                                if (d.grupo === 'Perigoso') return '#ef4444';
+                                return '#9ca3af';
+                            }),
+                            borderWidth: 2,
+                            borderRadius: 8,
+                            barThickness: 50
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                padding: 12,
+                                borderRadius: 8,
+                                titleFont: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                callbacks: {
+                                    label: function(context) {
+                                        return 'Temp: ' + context.parsed.y + '°C';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 13,
+                                        weight: '600'
+                                    },
+                                    color: '#4b5563'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 40,
+                                grid: {
+                                    color: 'rgba(0, 0, 0, 0.05)',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: {
+                                        size: 12
+                                    },
+                                    color: '#6b7280',
+                                    stepSize: 5,
+                                    callback: function(value) {
+                                        return value + '°C';
+                                    }
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Atualizar métricas principais
+        function atualizarMetricas(dados) {
+            if (dados.length === 0) return;
+            
+            // Calcular médias
+            const tempMedia = dados.reduce((sum, d) => sum + d.temperatura, 0) / dados.length;
+            const umidadeMedia = dados.reduce((sum, d) => sum + d.umidade, 0) / dados.length;
+            const aqiMedio = dados.reduce((sum, d) => sum + d.aqi, 0) / dados.length;
+            
+            // Atualizar cards (se existirem)
+            const tempElement = document.querySelector('.metric-card p.text-2xl');
+            const umidadeElement = document.querySelectorAll('.metric-card p.text-2xl')[1];
+            const aqiElement = document.querySelector('.metric-card p.text-2xl');
+            
+            if (tempElement) {
+                tempElement.innerHTML = `${Math.round(tempMedia)} <span class="text-sm font-normal text-gray-600">°C</span>`;
+            }
+            if (umidadeElement) {
+                umidadeElement.innerHTML = `${Math.round(umidadeMedia)} <span class="text-sm font-normal text-gray-600">%</span>`;
+            }
+        }
+        
+        // Dados simulados estáticos para os bairros
+        const dadosBairros = {
+            'Ótimo': [
+                { nome: 'Centro', aqi: 1, temperatura: 24.5, umidade: 58 },
+                { nome: 'Jardim São Paulo', aqi: 1, temperatura: 25.2, umidade: 55 },
+                { nome: 'Jardim Bela Vista', aqi: 2, temperatura: 23.8, umidade: 60 },
+                { nome: 'Vila Aparecida', aqi: 1, temperatura: 24.1, umidade: 57 },
+                { nome: 'Jardim Primavera', aqi: 2, temperatura: 25.0, umidade: 54 }
+            ],
+            'Bom': [
+                { nome: 'Santa Terezinha', aqi: 2, temperatura: 26.1, umidade: 52 },
+                { nome: 'Jardim América', aqi: 2, temperatura: 25.8, umidade: 53 },
+                { nome: 'Vila Industrial', aqi: 3, temperatura: 26.5, umidade: 50 },
+                { nome: 'Jardim Laranjeiras', aqi: 2, temperatura: 25.3, umidade: 56 },
+                { nome: 'Parque Universitário', aqi: 2, temperatura: 24.9, umidade: 58 },
+                { nome: 'Jardim das Flores', aqi: 3, temperatura: 26.2, umidade: 51 }
+            ],
+            'Moderado': [
+                { nome: 'Jardim São Jorge', aqi: 3, temperatura: 27.8, umidade: 48 },
+                { nome: 'Vila Marte', aqi: 3, temperatura: 28.1, umidade: 47 },
+                { nome: 'Jardim Eldorado', aqi: 4, temperatura: 28.5, umidade: 45 },
+                { nome: 'Parque São Domingos', aqi: 3, temperatura: 27.5, umidade: 49 },
+                { nome: 'Jardim Panorama', aqi: 3, temperatura: 28.0, umidade: 46 }
+            ],
+            'Ruim': [
+                { nome: 'Jardim Imperial', aqi: 4, temperatura: 29.2, umidade: 42 },
+                { nome: 'Vila Nova', aqi: 4, temperatura: 29.5, umidade: 40 },
+                { nome: 'Jardim Cidade Nova', aqi: 4, temperatura: 29.8, umidade: 38 }
+            ]
+        };
+
+        // Inicializar gráfico dos bairros
+        function inicializarGraficoBairros() {
+            const ctx = document.getElementById('bairrosChart').getContext('2d');
+            
+            // Calcular médias para o gráfico
+            const dadosGrafico = [
+                { 
+                    grupo: 'Ótimo', 
+                    bairros: dadosBairros['Ótimo'], 
+                    mediaTemp: dadosBairros['Ótimo'].reduce((sum, b) => sum + b.temperatura, 0) / dadosBairros['Ótimo'].length,
+                    mediaUmidade: dadosBairros['Ótimo'].reduce((sum, b) => sum + b.umidade, 0) / dadosBairros['Ótimo'].length
+                },
+                { 
+                    grupo: 'Bom', 
+                    bairros: dadosBairros['Bom'], 
+                    mediaTemp: dadosBairros['Bom'].reduce((sum, b) => sum + b.temperatura, 0) / dadosBairros['Bom'].length,
+                    mediaUmidade: dadosBairros['Bom'].reduce((sum, b) => sum + b.umidade, 0) / dadosBairros['Bom'].length
+                },
+                { 
+                    grupo: 'Moderado', 
+                    bairros: dadosBairros['Moderado'], 
+                    mediaTemp: dadosBairros['Moderado'].reduce((sum, b) => sum + b.temperatura, 0) / dadosBairros['Moderado'].length,
+                    mediaUmidade: dadosBairros['Moderado'].reduce((sum, b) => sum + b.umidade, 0) / dadosBairros['Moderado'].length
+                },
+                { 
+                    grupo: 'Ruim', 
+                    bairros: dadosBairros['Ruim'], 
+                    mediaTemp: dadosBairros['Ruim'].reduce((sum, b) => sum + b.temperatura, 0) / dadosBairros['Ruim'].length,
+                    mediaUmidade: dadosBairros['Ruim'].reduce((sum, b) => sum + b.umidade, 0) / dadosBairros['Ruim'].length
+                }
+            ];
+            
+            window.bairrosChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dadosGrafico.map(d => `${d.grupo} (${d.bairros.length} bairros)`),
+                    datasets: [{
+                        label: 'Temperatura Média por Grupo (°C)',
+                        data: dadosGrafico.map(d => Math.round(d.mediaTemp * 10) / 10),
+                        backgroundColor: dadosGrafico.map(d => {
+                            if (d.grupo === 'Ótimo') return 'rgba(34, 197, 94, 0.8)';
+                            if (d.grupo === 'Bom') return 'rgba(132, 204, 22, 0.8)';
+                            if (d.grupo === 'Moderado') return 'rgba(250, 204, 21, 0.8)';
+                            if (d.grupo === 'Ruim') return 'rgba(251, 146, 60, 0.8)';
+                            return 'rgba(156, 163, 175, 0.8)';
+                        }),
+                        borderColor: dadosGrafico.map(d => {
+                            if (d.grupo === 'Ótimo') return '#22c55e';
+                            if (d.grupo === 'Bom') return '#84cc16';
+                            if (d.grupo === 'Moderado') return '#facc15';
+                            if (d.grupo === 'Ruim') return '#fb923c';
+                            return '#9ca3af';
+                        }),
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        barThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            borderRadius: 8,
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Temp: ' + context.parsed.y + '°C';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 13,
+                                    weight: '600'
+                                },
+                                color: '#4b5563'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 35,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                color: '#6b7280',
+                                stepSize: 5,
+                                callback: function(value) {
+                                    return value + '°C';
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+        }
+
+        // Iniciar o sistema quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarDadosClassificar();
+            
+            // Inicializar dados dos bairros
+            renderizarGruposBairros(dadosBairros);
+            inicializarGraficoBairros();
+        });
+    </script>
+</body>
+</html>
