@@ -1,0 +1,18 @@
+[Unit]
+Description=Cidades Verdes - API Ambiente (FastAPI 8101)
+After=network.target firebird3.0.service
+Requires=firebird3.0.service
+
+[Service]
+Type=simple
+User=deploy
+Group=deploy
+WorkingDirectory=/home/deploy/var/www/sistema-gestao/cidadesverdes
+EnvironmentFile=/home/deploy/var/www/sistema-gestao/cidadesverdes/.env
+Environment=PYTHONPATH=/home/deploy/var/www/sistema-gestao/cidadesverdes
+ExecStart=/home/deploy/var/www/sistema-gestao/cidadesverdes/.venv/bin/uvicorn app_ambiente.main:app --host 0.0.0.0 --port 8101
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
