@@ -1,17 +1,39 @@
-from contextlib import contextmanager
 from datetime import date, datetime, time
 from typing import Any, Dict, List, Optional
 
-import fdb
-from fastapi import FastAPI, HTTPException, Query, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from config import get_settings
+from app.db import get_connection
 
 
 settings = get_settings()
 
+
+# ---------------------------------------------------------------------------
+# Proteção por API Key
+# ---------------------------------------------------------------------------
+
+def verify_api_key(x_api_key: str = Header(..., alias="X-API-Key")):
+    """Valida o header X-API-Key contra a chave definida no .env."""
+    if not settings.api_key:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="API_KEY não configurada no servidor",
+        )
+    if x_api_key != settings.api_key:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="API Key inválida",
+        )
+    return x_api_key
+
+
+# ---------------------------------------------------------------------------
+# Modelos Pydantic
+# ---------------------------------------------------------------------------
 
 class AmbienteCreate(BaseModel):
     temperatura: float
@@ -33,33 +55,28 @@ class AmbienteOut(AmbienteCreate):
     created_at: datetime
 
 
+class SensorCreate(BaseModel):
+    """Payload recebido do ESP32."""
+    cidade: str = Field(..., max_length=100)
+    estado: str = Field(..., max_length=50)
+    pais: str = Field(..., max_length=50)
+    latitude: float
+    longitude: float
+    temperatura: float
+    humidade: float
+    co2: int
+    device_id: str = Field(..., max_length=100)
+
+
+class SensorOut(BaseModel):
+    """Resposta de sucesso ao inserir sensor."""
+    success: bool = True
+    message: str = "Dados inseridos com sucesso"
+    device_id: str
+
+
 class ErrorResponse(BaseModel):
     detail: str
-
-
-def _make_dsn() -> str:
-    return f"{settings.firebird_host}/{settings.firebird_port}:{settings.firebird_database}"
-
-
-@contextmanager
-def get_connection():
-    conn = None
-    try:
-        conn = fdb.connect(
-            dsn=_make_dsn(),
-            user=settings.firebird_user,
-            password=settings.firebird_password,
-            charset=settings.firebird_charset,
-        )
-        yield conn
-    except fdb.DatabaseError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Erro ao conectar/operar no Firebird: {exc}",
-        ) from exc
-    finally:
-        if conn:
-            conn.close()
 
 
 def _row_to_dict(row: tuple) -> Dict[str, Any]:
@@ -236,3 +253,53 @@ def listar_ambiente(
         rows = cur.fetchall()
 
     return [_row_to_dict(row) for row in rows]
+
+
+# ---------------------------------------------------------------------------
+# Rota POST /sensores  –  recebe dados do ESP32
+# ---------------------------------------------------------------------------
+
+@app.post(
+    "/sensores",
+    response_model=SensorOut,
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        403: {"model": ErrorResponse},
+        500: {"model": ErrorResponse},
+    },
+)
+def criar_sensor(
+    payload: SensorCreate,
+    _api_key: str = Depends(verify_api_key),
+):
+    """
+    Recebe leituras de sensores (temperatura, humidade, CO2) enviadas
+    pelo ESP32 e insere na tabela SENSORES do Firebird.
+    Requer header ``X-API-Key`` válido.
+    """
+    insert_sql = """
+        INSERT INTO SENSORES (
+            CIDADE, ESTADO, PAIS, LATITUDE, LONGITUDE,
+            TEMPERATURA, HUMIDADE, CO2, DEVICE_ID
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """
+
+    with get_connection() as conn:
+        cur = conn.cursor()
+        cur.execute(
+            insert_sql,
+            (
+                payload.cidade,
+                payload.estado,
+                payload.pais,
+                payload.latitude,
+                payload.longitude,
+                payload.temperatura,
+                payload.humidade,
+                payload.co2,
+                payload.device_id,
+            ),
+        )
+        conn.commit()
+
+    return SensorOut(device_id=payload.device_id)

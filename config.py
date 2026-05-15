@@ -26,6 +26,8 @@ class Settings:
 
     cors_allow_origins: str = os.getenv("CORS_ALLOW_ORIGINS", "*")
 
+    api_key: str = os.getenv("API_KEY", "")
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
