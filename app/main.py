@@ -286,6 +286,26 @@ def criar_sensor(
 
     with get_connection() as conn:
         cur = conn.cursor()
+
+        # Verifica ultima leitura do mesmo device
+        sql_ultima = (
+            "SELECT FIRST 1 TEMPERATURA, HUMIDADE, CO2 "
+            "FROM SENSORES WHERE DEVICE_ID = ? ORDER BY ID DESC"
+        )
+        cur.execute(sql_ultima, (payload.device_id,))
+        ultima = cur.fetchone()
+
+        # Se valores iguais, nao grava
+        if ultima:
+            temp_igual = abs(float(ultima[0]) - payload.temperatura) < 0.2
+            umid_igual = abs(float(ultima[1]) - payload.humidade) < 1.0
+            co2_igual  = abs(int(ultima[2]) - payload.co2) < 10
+            if temp_igual and umid_igual and co2_igual:
+                return SensorOut(
+                    device_id=payload.device_id,
+                    message="Dados iguais a ultima leitura - nao gravado."
+                )
+
         cur.execute(
             insert_sql,
             (
