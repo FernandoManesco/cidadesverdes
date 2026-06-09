@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
 import numpy as np
@@ -112,45 +112,110 @@ class SensoresReaisAPI:
             raise HTTPException(status_code=500, detail=f"Erro ao obter dados: {str(e)}")
     
     def get_historical_data(self, days: int = 7):
-        """Gera dados históricos simulados baseados em padrões reais"""
+        """Obtém dados históricos do OpenWeatherMap API usando forecast (free tier)"""
+        if not self.openweather_key:
+            raise HTTPException(status_code=401, detail="OpenWeather API key não configurada")
+        
         leituras = []
-        base_time = datetime.now() - timedelta(days=days)
         
-        for i in range(days * 24):  # Uma leitura por hora
-            timestamp = base_time + timedelta(hours=i)
-            hora = timestamp.hour
+        try:
+            # Usar 5-day forecast API (free tier) - dados a cada 3 horas
+            forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={LOCATION['lat']}&lon={LOCATION['lon']}&appid={self.openweather_key}&units=metric"
+            forecast_response = requests.get(forecast_url)
+            forecast_data = forecast_response.json()
             
-            # Simular padrões diários
-            if 6 <= hora <= 18:  # Dia
-                temp_base = 22 + random.uniform(-3, 5)
-                humidity_base = 45 + random.uniform(-10, 15)
-                co2_base = 450 + random.uniform(-100, 200)
-            else:  # Noite
-                temp_base = 18 + random.uniform(-3, 3)
-                humidity_base = 60 + random.uniform(-10, 20)
-                co2_base = 600 + random.uniform(-100, 300)
+            if forecast_response.status_code != 200:
+                raise Exception("Erro na API de forecast")
             
-            # Adicionar anomalias ocasionais
-            if random.random() < 0.1:
-                anomalia = random.choice(['quente', 'frio', 'co2_alto'])
-                if anomalia == 'quente':
-                    temp_base = random.uniform(30, 35)
-                    co2_base = random.uniform(800, 1500)
-                elif anomalia == 'frio':
-                    temp_base = random.uniform(8, 12)
-                    humidity_base = random.uniform(75, 85)
-                elif anomalia == 'co2_alto':
-                    co2_base = random.uniform(2500, 4000)
+            # Obter dados de poluição atual para estimar CO2
+            pollution_url = f"https://api.openweathermap.org/data/2.5/air_pollution?lat={LOCATION['lat']}&lon={LOCATION['lon']}&appid={self.openweather_key}"
+            pollution_response = requests.get(pollution_url)
+            pollution_data = pollution_response.json()
             
-            leituras.append({
-                "timestamp": timestamp,
-                "temperatura": round(temp_base, 1),
-                "umidade": round(humidity_base, 1),
-                "co2": int(co2_base),
-                "source": "Simulated Historical"
-            })
-        
-        return leituras
+            # Extrair AQI base
+            aqi_base = pollution_data.get('list', [{}])[0].get('main', {}).get('aqi', 1)
+            co2_mapping = {1: 400, 2: 600, 3: 800, 4: 1200, 5: 2000}
+            co2_base_value = co2_mapping.get(aqi_base, 400)
+            
+            # Processar cada ponto do forecast (a cada 3 horas)
+            forecast_list = forecast_data.get('list', [])
+            
+            for item in forecast_list:
+                dt_txt = item.get('dt_txt', '')
+                main = item.get('main', {})
+                
+                temp = main.get('temp', 20)
+                humidity = main.get('humidity', 50)
+                
+                # Converter string de timestamp para datetime
+                timestamp = datetime.strptime(dt_txt, '%Y-%m-%d %H:%M:%S')
+                
+                # Estimar CO2 baseado no AQI base com variação horária
+                hora = timestamp.hour
+                co2_variacao = 0
+                
+                # Variação de CO2 baseada na hora (mais alto durante o dia)
+                if 7 <= hora <= 18:
+                    co2_variacao = random.uniform(50, 200)
+                else:
+                    co2_variacao = random.uniform(-50, 100)
+                
+                co2 = co2_base_value + co2_variacao
+                
+                leituras.append({
+                    "timestamp": timestamp,
+                    "temperatura": round(temp, 1),
+                    "umidade": round(humidity, 1),
+                    "co2": int(max(300, min(5000, co2))),
+                    "source": "OpenWeatherMap Forecast",
+                    "location": LOCATION['city']
+                })
+            
+            # Se precisar de mais dados do que o forecast fornece (max 40 pontos), usar dados atuais com variação
+            if len(leituras) < days * 24:
+                # Obter dados atuais
+                weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={LOCATION['lat']}&lon={LOCATION['lon']}&appid={self.openweather_key}&units=metric"
+                weather_response = requests.get(weather_url)
+                weather_data = weather_response.json()
+                
+                main = weather_data.get('main', {})
+                temp_atual = main.get('temp', 20)
+                humidity_atual = main.get('humidity', 50)
+                
+                # Gerar dados adicionais baseados no atual com padrões diários
+                pontos_faltantes = (days * 24) - len(leituras)
+                base_time = datetime.now() - timedelta(days=days)
+                
+                for i in range(pontos_faltantes):
+                    timestamp = base_time + timedelta(hours=i)
+                    hora = timestamp.hour
+                    
+                    # Variação baseada na hora
+                    if 6 <= hora <= 18:
+                        temp = temp_atual + random.uniform(-2, 3)
+                        humidity = humidity_atual + random.uniform(-5, 10)
+                    else:
+                        temp = temp_atual + random.uniform(-3, 2)
+                        humidity = humidity_atual + random.uniform(-5, 15)
+                    
+                    co2 = co2_base_value + random.uniform(-100, 200)
+                    
+                    leituras.append({
+                        "timestamp": timestamp,
+                        "temperatura": round(temp, 1),
+                        "umidade": round(max(20, min(95, humidity)), 1),
+                        "co2": int(max(300, min(5000, co2))),
+                        "source": "OpenWeatherMap Current + Pattern",
+                        "location": LOCATION['city']
+                    })
+            
+            # Ordenar por timestamp
+            leituras.sort(key=lambda x: x['timestamp'])
+            
+            return leituras
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Erro ao obter dados históricos: {str(e)}")
     
     def get_nearby_cities_data(self):
         """Obtém dados das 10 cidades mais próximas de Rio Claro"""
@@ -288,6 +353,15 @@ class SensoresReaisAPI:
         return dados_cidades
 
 sensores_api = SensoresReaisAPI()
+
+@app.get("/index")
+def serve_html():
+    """Serve the HTML frontend"""
+    try:
+        with open("index_simplificado.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="<h1>Arquivo index_simplificado.html não encontrado</h1>", status_code=404)
 
 def detectar_nome_grupo(centroide):
     """Detecta automaticamente o nome do grupo pelo centróide."""
